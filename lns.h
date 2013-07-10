@@ -5,39 +5,51 @@
 
 namespace Gecode {
 
-  /** Meta-engine performing Large Neighborhood Search (LNS) based on a given engine. */
+  /**
+   * \brief Meta-engine performing large neighborhood search
+   *
+   * The class \a T can implement some member functions described in the
+   * \a LNSModel interface.
+   *
+   *
+   * \ingroup TaskModelSearch
+   */
   template<template<class> class E, class T>
   class LNS : public EngineBase {
   public:
-    
-    /** Initialize the engine with a space
-        @param s initial solution
-     */
+    /// Initialize engine for space \a s and options \a o
     LNS(T* s, const Search::Options& o);
-    
     ~LNS(void);
-    
-    /** Find next solution
-        @return the next solution or NULL if there is no solution or the engine has been stopped
-     */
+    /// Return next solution (NULL, if non exists or search has been stopped)
     T* next(void);
-    
+    /// Return statistics
     Search::Statistics stats;
     Search::Statistics statistics(void) const;
-    
-    /** Checks whether the engine has been stopped */
+    /// Check whether engine has been stopped
     bool stopped(void) const;
-  
   protected:
-  
-    /** Engine to use for the exploration of the neighborhood */
     E<T>* engine;
-    
-    /** Engine used to find the initial solution */
     E<T>* start_engine;
   };
 
-  /** Perform LNS starting with a given solution */
+  /**
+   * \brief Perform large neighborhood search
+   *
+   * The engine uses the Cutoff sequence supplied in the options \a o to
+   * periodically restart the search of an engine of type \a E.
+   *
+   * The class \a T can implement member functions
+   * \code virtual void master(unsigned long int i, const Space* s) \endcode
+   * and
+   * \code virtual void slave(unsigned long int i, const Space* s) \endcode
+   *
+   * Whenever exploration restarts or a solution is found, the
+   * engine executes the functions on the master and slave
+   * space. For more details, consult "Modeling and Programming
+   * with Gecode".
+   *
+   * \ingroup TaskModelSearch
+   */
   template<template<class> class E, class T>
   T* lns(T* s, const Search::Options& o);
 
@@ -47,36 +59,17 @@ namespace Gecode {
 #include <gecode/driver.hh>
 
 namespace Gecode {
+  enum LNSConstrainType { LNS_CT_NONE, LNS_CT_LOOSE, LNS_CT_STRICT, LNS_CT_SA };
   
-  /** Option modeling the way a relaxed solution is constrained before the LNS step 
-   */
-  enum LNSConstrainType
-  {
-    /** The solution is not constrained */
-    LNS_CT_NONE,
-    
-    /** The solution is loosely constrained, i.e., spaces of equal cost are considered solutions */
-    LNS_CT_LOOSE,
-    
-    /** The solution is strictly constrained, i.e., only spaces of improving cost are considered solutions */
-    LNS_CT_STRICT,
-    
-    /** The solution is constrained with a delta, i.e., spaces with a cost that is delta units greater than the current one are considered solutions (worsening solutions allowed) */
-    LNS_CT_SA
-  };
-  
-  /** A class representing instance (and search) options specific to LNS */
   class LNSInstanceOptions : public InstanceOptions {
   public:
-    
-    /** Constructor, posts options on the command line, provides accessors */
     LNSInstanceOptions(const char* s)
     : InstanceOptions(s),
     _time_per_variable("-lns_time_per_variable", "LNS: the time to grant for neighborhood exploration to each relaxed variable (in milliseconds)", 10.0),
-    _constrain_type("-lns_constraint_type", "LNS: the type of constrain function to be applied to search (default: none, other values: strict, sa, gd)", LNS_CT_NONE),
-    _max_iterations_per_intensity("-lns_max_iterations_per_intensity", "LNS: max iterations before increasing relaxation intensity", 1),
+    _constrain_type("-lns_constraint_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
+    _max_iterations_per_intensity("-lns_max_iterations_per_intensity", "LNS: max non improving iterations before increasing relaxation intensity", 10),
     _min_intensity("-lns_min_intensity", "LNS: the minimum relaxation intensity", 1),
-    _max_intensity("-lns_max_intensity", "LNS: the maximum relxation intensity", 0),
+    _max_intensity("-lns_max_intensity", "LNS: the maximum relxation intensity", 5),
     _sa_start_temperature("-lns_sa_start_temperature", "LNS(SA): start temperature", 1.0),
     _sa_cooling_rate("-lns_sa_cooling_rate", "LNS(SA): cooling rate", 0.99),
     _sa_neighbors_accepted("-lns_sa_neighbors_accepted", "LNS(SA): neighbors accepted per temperature", 100)    
@@ -95,6 +88,7 @@ namespace Gecode {
       add(_sa_cooling_rate);
       add(_sa_neighbors_accepted);
     }
+    //    virtual void help(void);
     
     double timePerVariable(void) const { return _time_per_variable.value(); }
     void timePerVariable(double v) { _time_per_variable.value(v); }
@@ -104,6 +98,7 @@ namespace Gecode {
     
     unsigned int maxIterationsPerIntensity(void) const { return _max_iterations_per_intensity.value(); }
     void maxIterationsPerIntensity(unsigned int v) { _max_iterations_per_intensity.value(v); }
+
     
     unsigned int minIntensity(void) const { return _min_intensity.value(); }
     void minIntensity(unsigned int v) { _min_intensity.value(v); }
@@ -119,22 +114,20 @@ namespace Gecode {
     
     unsigned int SAneighborsAccepted(void) const { return _sa_neighbors_accepted.value(); }
     void SAneighborsAccepted(unsigned int v) { _sa_neighbors_accepted.value(v); }
+    
         
   protected:
-    
     LNSInstanceOptions(const LNSInstanceOptions& opt)
     : InstanceOptions(opt.instance()), _time_per_variable(opt._time_per_variable), _constrain_type(opt._constrain_type), _max_iterations_per_intensity(opt._max_iterations_per_intensity),
 _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
     _sa_start_temperature(opt._sa_start_temperature), _sa_cooling_rate(opt._sa_cooling_rate), _sa_neighbors_accepted(opt._sa_neighbors_accepted)
     {}
-    
     Driver::DoubleOption _time_per_variable;
     Driver::StringOption _constrain_type;
     Driver::UnsignedIntOption _max_iterations_per_intensity;
     Driver::UnsignedIntOption _min_intensity;
     Driver::UnsignedIntOption _max_intensity;
-    
-    // FIXME: add SA parameters
+    // FIXME: aggiungere anche i parametri sa
     Driver::DoubleOption _sa_start_temperature;
     Driver::DoubleOption _sa_cooling_rate;
     Driver::UnsignedIntOption _sa_neighbors_accepted;
@@ -143,32 +136,24 @@ _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
 
 namespace Gecode { namespace Search {
   
-  /** This class implements a combined stop criterion for LNS-based meta-engines the
-      underlying engine is handled through a TimeStop, while the overall stop object
-      is by the user, e.g., through the script controlling the meta-engine. 
-   */
+  /// This class implements a combined stop criterion for LNS based meta-engines
+  /// the underlying engine is handled through a TimeStop, while the lns_stop is passed
+  /// (possibly) from the script controlling the meta-engine.
   class LNSMetaStop : public Stop {
   protected:
-    
-    /** "Real" stop object, as provided by the user */
     Stop* lns_stop;
-    
-    /** Internal stop object, i.e., for use in the LNS step */
     TimeStop* e_stop;
-    
   public:
-    
-    LNSMetaStop(Stop* lns_stop0, TimeStop* e_stop0) : lns_stop(lns_stop0), e_stop(e_stop0)
-    { }
-   
-    /** Verify the stopping condition, i.e., wether any of the two stop object is active */
+    LNSMetaStop(Stop* lns_stop0, TimeStop* e_stop0) : lns_stop(lns_stop0), e_stop(e_stop0) {}
+    /// The stop method verifies a combined stopping condition
+    /// (i.e., whether either the meta-engine or the engine stop criterion is satisfied)
     virtual bool stop(const Statistics& s, const Options& o) {
       return (e_stop != NULL && e_stop->stop(s,o)) || (lns_stop != NULL && lns_stop->stop(s,o));
     }
   };
   
-  /** FIXME: waiting for a more integrated (and not intrusive) solution, this class is abused
-      for passing specific parameters to the LNS engine */
+  /// Waiting for a more integrated (and not intrusive) solution, this class is abused
+  /// for passing specific parameters to the LNS engine
   class LNSParameters : public LNSInstanceOptions {
   public:
     LNSParameters(const LNSInstanceOptions& opt0) : LNSInstanceOptions(opt0) {}
@@ -179,18 +164,15 @@ namespace Gecode { namespace Search {
 
 namespace Gecode {
 
+
   namespace Search {
     
-    /** Instantiates a LNS engine given the neede parameters */
-    GECODE_SEARCH_EXPORT Engine* lns(
-      Space* s, // initial space
-      size_t sz,
-      TimeStop* e_stop,
-      Engine* se, // start engine
-      Engine* e,  // engine for LNS step
-      Search::Statistics& st,
-      const Options& o
-    );
+    GECODE_SEARCH_EXPORT Engine* lns(Space* s, size_t sz,
+                                     TimeStop* e_stop,
+                                     Engine* se,
+                                     Engine* e,
+                                     Search::Statistics& st,
+                                     const Options& o);
   }
   
   template<template<class> class E, class T>
@@ -249,12 +231,16 @@ namespace Gecode {
     //delete engine;
   }
 
+
   template<template<class> class E, class T>
   forceinline T*
   lns(T* s, const Search::Options& o) {    
     LNS<E,T> l(s,o);
     return l.next();
   }
+
 }
 
 #endif
+
+// STATISTICS: search-other

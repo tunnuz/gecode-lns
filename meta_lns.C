@@ -1,5 +1,19 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Luca Di Gaspero <luca.digaspero@uniud.it>
+ *     Tommaso Urli <tommaso.urli@uniud.it>
+ *
+ *  Copyright:
+ *     Luca Di Gaspero, Tommaso Urli, 2013
+ *
+ *
+ */
+
 #include "meta_lns.h"
 #include "hybrid_model.h"
+#include <list>
+
 
 namespace Gecode { namespace Search { namespace Meta {
   
@@ -20,21 +34,21 @@ namespace Gecode { namespace Search { namespace Meta {
         temperature = lns_options->SAstartTemperature();
         idle_iterations = 0;
         neighbors_accepted = 0;
-        current = root->clone(false);
+        current = root->clone(shared);
         LNSModel* _current = dynamic_cast<LNSModel*>(current);
         _current->initial_solution_branching(restart);
         // The initial solution is searched with a copy of the engine that has the same
         // stop object as the overall LNS
         se->reset(current);
         Space* n = se->next();
-        if (n != NULL) {          
+        delete current;
+        if (n != NULL) {
           if (best == NULL) // it's the very first time the function is called
           {
             best = n->clone(shared);
             current = n->clone(shared);
             return n;
           }
-            
           LNSModel* _n = dynamic_cast<LNSModel*>(n);
           if (_n->strictlyImproving(best))
           {
@@ -56,18 +70,18 @@ namespace Gecode { namespace Search { namespace Meta {
           if (intensity < lns_options->maxIntensity())
             intensity++;
           idle_iterations = 0;
+          std::cerr << "Current intensity " << intensity << std::endl;
         }
         if (neighbors_accepted > lns_options->SAneighborsAccepted())
         {
           temperature *= lns_options->SAcoolingRate();
           neighbors_accepted = 0;
         }
-        Space* neighbor = root->clone(false);
+        Space* neighbor = root->clone(shared);
         LNSModel* _current = dynamic_cast<LNSModel*>(current);
         unsigned int relaxed_variables = _current->relax(neighbor, intensity);
         LNSModel* _neighbor = dynamic_cast<LNSModel*>(neighbor);
         _neighbor->neighborhood_branching();
-        e->reset(neighbor);
         e_stop->limit(relaxed_variables * lns_options->timePerVariable());
         e_stop->reset();
         switch (lns_options->constrainType()) {
@@ -88,15 +102,18 @@ namespace Gecode { namespace Search { namespace Meta {
           default:
             break;
         }
+        e->reset(neighbor);
         Space* n = NULL;
-        Space* pn;
+        std::list<Space*> prev_solutions;
         do
-        {
-          pn = n;
-          n = e->next();
-        }
-        while (n != NULL);
-        n = pn;
+          prev_solutions.push_back(e->next());
+        while (prev_solutions.back() != NULL);
+        if (prev_solutions.size() > 1)
+          prev_solutions.pop_back(); // remove the last NULL solution
+        n = prev_solutions.back();
+        prev_solutions.pop_back();
+        for (std::list<Space*>::iterator it = prev_solutions.begin(); it != prev_solutions.end(); it++)
+          delete *it;
         if (n != NULL)
         {
           neighbors_accepted++;
@@ -105,7 +122,7 @@ namespace Gecode { namespace Search { namespace Meta {
           {
             delete best;
             best = n->clone(shared);
-            //delete current;
+            delete current;
             current = n->clone(shared);
             idle_iterations = 0;
             intensity = lns_options->minIntensity();
@@ -150,7 +167,12 @@ namespace Gecode { namespace Search { namespace Meta {
   }
   
   void
-  LNS::reset(Space*) {
+  LNS::reset(Space* s) {
+    current = s->clone(shared);
+    idle_iterations = 0;
+    intensity = lns_options->minIntensity();
+    neighbors_accepted = 0;
+    temperature = lns_options->SAstartTemperature();
   }
   
   LNS::~LNS(void) {
@@ -160,3 +182,5 @@ namespace Gecode { namespace Search { namespace Meta {
   }
   
 }}}
+
+// STATISTICS: search-other

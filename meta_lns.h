@@ -1,85 +1,75 @@
-#ifndef _META_LNS_HH
-#define _META_LNS_HH
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Luca Di Gaspero <luca.digaspero@uniud.it>
+ *     Tommaso Urli <tommaso.urli@uniud.it>
+ *
+ *  Copyright:
+ *     Luca Di Gaspero, Tommaso Urli, 2013
+ *
+ *
+ */
+
+
+
+#ifndef __GECODE_SEARCH_META_LNS_HH__
+#define __GECODE_SEARCH_META_LNS_HH__
 
 #include <gecode/search.hh>
 #include "lns.h"
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  /** Engine for LNS-based search */
+  /// Engine for restart-based search
   class LNS : public Engine {
   private:
-
-    /** The underlying engine for finding the initial solution */
+    /// The actual engine(s)
     Engine* se;
-    
-    /** The underlying engine for the LNS step, e.g., BAB, DFS, etc. */
     Engine* e;
-    
-    /** The root space to create new partial solutions from scratch */
+    /// The root space to create new partial solutions from scratch
     Space* root;
-    
-    /** The best solution so far */
+    /// The best solution that far
     Space* best;
-    
-    /** The current solution */
+    /// The current solution
     Space* current;
-    
-    /** The stop object for the sub-engine */
+    /// The stop control object for the sub-engine
     TimeStop* e_stop;
-    
-    /** The stop object for the overall LNS engine */
+    /// The stop control object for the overall LNS
     Stop* m_stop;
-    
-    /** Statistics */
+    /// The statistics
     Search::Statistics& stats;
-    
-    /** The search options */
+    /// The options
     const Options& opt;
-    
-    /** The number of times the search has been restarted */
+    /// The number of times stop has reached
     unsigned long int restart;
-    
-    /** The number of non-improving iterations performed (for detecting stagnation) */
+    /// The number of idle iterations performed (for detecting stagnation)
     unsigned long int idle_iterations;
-    
-    /** The current intensity for LNS relaxtion */
+    /// The current intensity for LNS
     unsigned int intensity;
-    
-    /** Whether the slave can be shared with the master */
+    /// Whether the slave can be shared with the master
     bool shared;
-    
-    /** PRNG */
+    /// Random numbers generator
     Rnd r;
-    
-    /** Current temperature for SA stopping criterion */
+    /// Current temperature for SA
     double temperature;
-    
-    /** Neighbors accepted at current temperature (to trigger cooling step) */
+    /// Neighbors accepted at current temperature
     unsigned long int neighbors_accepted;
-    
   public:
-    
-    /** Constructor */
-    LNS(Space*, size_t, TimeStop* e_stop0, Engine* se0, Engine* e0, Search::Statistics& stats0, const Options& opt0);
-    
-    /** Return next solution (NULL, if none exists or search has been stopped) */
+    /// Constructor
+    LNS(Space*, size_t, TimeStop* e_stop0,
+        Engine* se0, Engine* e0, Search::Statistics& stats0, const Options& opt0);
+    /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
-    
-    /** Return statistics */
+    /// Return statistics
     virtual Search::Statistics statistics(void) const;
-    
-    /** Check whether engine has been stopped */
+    /// Check whether engine has been stopped
     virtual bool stopped(void) const;
-    
-    /** Reset engine to restart at space 
-        @param s the space to restart with
-     */
+    /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
-    
+    /// Destructor
     virtual ~LNS(void);
-    
-    /** FIXME: waiting for a definitive way to pass specific options to the (meta-)engines, currently they will be embedded in a static member of the LNS class */
+    /// FIXME: waiting for a definitive way to pass specific options to the (meta-)engines, currently they will be embedded in
+    /// a static member of the LNS class
     static LNSInstanceOptions* lns_options;
   };
 
@@ -92,3 +82,5 @@ namespace Gecode { namespace Search { namespace Meta {
 }}}
 
 #endif
+
+// STATISTICS: search-other
