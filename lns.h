@@ -63,10 +63,38 @@ namespace Gecode {
 namespace Gecode {
   enum LNSConstrainType { LNS_CT_NONE, LNS_CT_LOOSE, LNS_CT_STRICT, LNS_CT_SA };
   
-  class LNSInstanceOptions : public InstanceOptions {
+  class LNSBaseOptions
+  {
   public:
-    LNSInstanceOptions(const char* s)
-    : InstanceOptions(s),
+    virtual double timePerVariable(void) const = 0;
+    virtual void timePerVariable(double v) = 0;
+    
+    virtual LNSConstrainType constrainType(void) const = 0;
+    virtual void constrainType(LNSConstrainType v) = 0;
+    
+    virtual unsigned int maxIterationsPerIntensity(void) const = 0;
+    virtual void maxIterationsPerIntensity(unsigned int v) = 0;
+    
+    virtual unsigned int minIntensity(void) const = 0;
+    virtual void minIntensity(unsigned int v) = 0;
+    
+    virtual unsigned int maxIntensity(void) const = 0;
+    virtual void maxIntensity(unsigned int v) = 0;
+    
+    virtual double SAstartTemperature(void) const = 0;
+    virtual void SAstartTemperature(double v) = 0;
+    
+    virtual double SAcoolingRate(void) const = 0;
+    virtual void SAcoolingRate(double v) = 0;
+    
+    virtual unsigned int SAneighborsAccepted(void) const = 0;
+    virtual void SAneighborsAccepted(unsigned int v) = 0;   
+  };
+  
+  template <class OptionsBase>
+  class LNSOptions : public LNSBaseOptions, public OptionsBase {
+  public:        
+    LNSOptions(const char* p) : OptionsBase(p),
     _time_per_variable("-lns_time_per_variable", "LNS: the time to grant for neighborhood exploration to each relaxed variable (in milliseconds)", 10.0),
     _constrain_type("-lns_constraint_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
     _max_iterations_per_intensity("-lns_max_iterations_per_intensity", "LNS: max non improving iterations before increasing relaxation intensity", 10),
@@ -81,14 +109,14 @@ namespace Gecode {
       _constrain_type.add(LNS_CT_STRICT, "strict");
       _constrain_type.add(LNS_CT_SA, "sa");
       
-      add(_time_per_variable);
-      add(_constrain_type);
-      add(_max_iterations_per_intensity);
-      add(_min_intensity);
-      add(_max_intensity);
-      add(_sa_start_temperature);
-      add(_sa_cooling_rate);
-      add(_sa_neighbors_accepted);
+      this->add(_time_per_variable);
+      this->add(_constrain_type);
+      this->add(_max_iterations_per_intensity);
+      this->add(_min_intensity);
+      this->add(_max_intensity);
+      this->add(_sa_start_temperature);
+      this->add(_sa_cooling_rate);
+      this->add(_sa_neighbors_accepted);
     }
     //    virtual void help(void);
     
@@ -115,12 +143,10 @@ namespace Gecode {
     void SAcoolingRate(double v) { _sa_cooling_rate.value(v); }
     
     unsigned int SAneighborsAccepted(void) const { return _sa_neighbors_accepted.value(); }
-    void SAneighborsAccepted(unsigned int v) { _sa_neighbors_accepted.value(v); }
-    
-        
+    void SAneighborsAccepted(unsigned int v) { _sa_neighbors_accepted.value(v); }            
   protected:
-    LNSInstanceOptions(const LNSInstanceOptions& opt)
-    : InstanceOptions(opt.instance()), _time_per_variable(opt._time_per_variable), _constrain_type(opt._constrain_type), _max_iterations_per_intensity(opt._max_iterations_per_intensity),
+    LNSOptions(const LNSOptions& opt)
+    : OptionsBase(opt), _time_per_variable(opt._time_per_variable), _constrain_type(opt._constrain_type), _max_iterations_per_intensity(opt._max_iterations_per_intensity),
 _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
     _sa_start_temperature(opt._sa_start_temperature), _sa_cooling_rate(opt._sa_cooling_rate), _sa_neighbors_accepted(opt._sa_neighbors_accepted)
     {}
@@ -134,6 +160,9 @@ _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
     Driver::DoubleOption _sa_cooling_rate;
     Driver::UnsignedIntOption _sa_neighbors_accepted;
   };
+  
+  typedef LNSOptions<SizeOptions> LNSSizeOptions;
+  typedef LNSOptions<InstanceOptions> LNSInstanceOptions;
 }
 
 namespace Gecode { namespace Search {

@@ -70,7 +70,7 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual ~LNS(void);
     /// FIXME: waiting for a definitive way to pass specific options to the (meta-)engines, currently they will be embedded in
     /// a static member of the LNS class
-    static LNSInstanceOptions* lns_options;
+    static LNSBaseOptions* lns_options;
   };
 
   forceinline
