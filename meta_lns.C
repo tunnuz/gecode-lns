@@ -167,7 +167,13 @@ namespace Gecode { namespace Search { namespace Meta {
   
   void
   LNS::reset(Space* s) {
-    current = s->clone(shared);
+    current = s;
+    LNSModel* _s = dynamic_cast<LNSModel*>(s);
+    if (best && _s->strictlyImproving(best))
+    {
+      delete best;
+      best = s->clone(shared);
+    }
     idle_iterations = 0;
     intensity = lns_options->minIntensity();
     neighbors_accepted = 0;

@@ -28,8 +28,10 @@ namespace Gecode {
     /// Check whether engine has been stopped
     bool stopped(void) const;
   protected:
+    Space* root;
     E<T>* engine;
     E<T>* start_engine;
+    const Search::Options& opt;
   };
 
   /**
@@ -177,7 +179,7 @@ namespace Gecode {
   
   template<template<class> class E, class T>
   forceinline
-  LNS<E,T>::LNS(T* s, const Search::Options& m_opt) {    
+  LNS<E,T>::LNS(T* s, const Search::Options& m_opt) : opt(m_opt) {
     Search::Options e_opt;
     e_opt.clone = true;
     e_opt.threads = m_opt.threads;
@@ -186,7 +188,6 @@ namespace Gecode {
     Search::TimeStop* ts = new Search::TimeStop(0);
     Search::LNSMetaStop* ms = new Search::LNSMetaStop(m_opt.stop, ts);
     e_opt.stop = ms;
-    Space* root;
     if (m_opt.clone) {
       if (s->status(stats) == SS_FAILED) {
         stats.fail++;
@@ -230,7 +231,9 @@ namespace Gecode {
   template<template<class> class E, class T>
   forceinline 
   LNS<E,T>::~LNS(void) {
-    //delete engine;
+    if (opt.clone)
+      delete root;
+    //delete engine; delete start_engine;
   }
 
 
