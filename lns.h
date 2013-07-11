@@ -197,10 +197,12 @@ namespace Gecode {
     } else {
       root = s;
     }
+    Search::Options& s_opt(const_cast<Search::Options&>(m_opt));
+    s_opt.clone = true;
     engine = new E<T>(dynamic_cast<T*>(root),e_opt);
     Search::Engine* ee = engine->e; // FIXME: now this class has to be friend of BaseEngine to allow it
     engine->e = NULL;
-    start_engine = new E<T>(dynamic_cast<T*>(root),m_opt);
+    start_engine = new E<T>(dynamic_cast<T*>(root),s_opt);
     Search::Engine* se = start_engine->e;
     start_engine->e = NULL;
     e = Search::lns(root,sizeof(T),ts,se,ee,stats,m_opt);

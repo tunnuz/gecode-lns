@@ -39,9 +39,8 @@ namespace Gecode { namespace Search { namespace Meta {
         _current->initial_solution_branching(restart);
         // The initial solution is searched with a copy of the engine that has the same
         // stop object as the overall LNS
-        se->reset(current);
+        se->reset(current);  // In case of reset, the space passed is not cloned by the engine
         Space* n = se->next();
-        delete current;
         if (n != NULL) {
           if (best == NULL) // it's the very first time the function is called
           {
@@ -70,7 +69,7 @@ namespace Gecode { namespace Search { namespace Meta {
           if (intensity < lns_options->maxIntensity())
             intensity++;
           idle_iterations = 0;
-          std::cerr << "Current intensity " << intensity << std::endl;
+          //std::cerr << "Current intensity " << intensity << std::endl;
         }
         if (neighbors_accepted > lns_options->SAneighborsAccepted())
         {
@@ -102,7 +101,7 @@ namespace Gecode { namespace Search { namespace Meta {
           default:
             break;
         }
-        e->reset(neighbor);
+        e->reset(neighbor); // in case of reset, the Space passed to the engine is not cloned
         Space* n = NULL;
         std::list<Space*> prev_solutions;
         do
