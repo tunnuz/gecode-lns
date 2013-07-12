@@ -1,0 +1,32 @@
+--- /export/local/include/gecode/search.hh	2013-03-08 11:11:37.000000000 +0100
++++ ./search.hh	2013-07-09 15:12:23.000000000 +0200
+@@ -238,6 +238,21 @@
+ 
+ }}}
+ 
++
++namespace Gecode {
++
++  template<template<class> class E, class T>
++  class LNS;
++
++}
++
++namespace Gecode { namespace Search { namespace Meta {
++
++  class LNS;
++
++}}}
++
++
+ namespace Gecode { namespace Search {
+ 
+   /**
+@@ -470,6 +485,7 @@
+    */
+   class EngineBase {
+     template<template<class>class,class> friend class ::Gecode::RBS;
++    template<template<class>class,class> friend class ::Gecode::LNS;
+   protected:
+     /// The actual search engine
+     Search::Engine* e;
