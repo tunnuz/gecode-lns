@@ -1,5 +1,5 @@
-#ifndef _HYBRID_MODEL
-#define _HYBRID_MODEL
+#ifndef _LNS_SPACE_H
+#define _LNS_SPACE_H
 
 #include <gecode/kernel.hh>
 #include <gecode/driver.hh>
