@@ -96,7 +96,7 @@ namespace Gecode {
   public:        
     LNSOptions(const char* p) : OptionsBase(p),
     _time_per_variable("-lns_time_per_variable", "LNS: the time to grant for neighborhood exploration to each relaxed variable (in milliseconds)", 10.0),
-    _constrain_type("-lns_constraint_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
+    _constrain_type("-lns_constrain_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
     _max_iterations_per_intensity("-lns_max_iterations_per_intensity", "LNS: max non improving iterations before increasing relaxation intensity", 10),
     _min_intensity("-lns_min_intensity", "LNS: the minimum relaxation intensity", 1),
     _max_intensity("-lns_max_intensity", "LNS: the maximum relxation intensity", 5),
@@ -109,14 +109,14 @@ namespace Gecode {
       _constrain_type.add(LNS_CT_STRICT, "strict");
       _constrain_type.add(LNS_CT_SA, "sa");
       
-      this->add(_time_per_variable);
-      this->add(_constrain_type);
-      this->add(_max_iterations_per_intensity);
-      this->add(_min_intensity);
-      this->add(_max_intensity);
-      this->add(_sa_start_temperature);
-      this->add(_sa_cooling_rate);
-      this->add(_sa_neighbors_accepted);
+      OptionsBase::add(_time_per_variable);
+      OptionsBase::add(_constrain_type);
+      OptionsBase::add(_max_iterations_per_intensity);
+      OptionsBase::add(_min_intensity);
+      OptionsBase::add(_max_intensity);
+      OptionsBase::add(_sa_start_temperature);
+      OptionsBase::add(_sa_cooling_rate);
+      OptionsBase::add(_sa_neighbors_accepted);
     }
     //    virtual void help(void);
     
@@ -150,12 +150,13 @@ namespace Gecode {
 _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
     _sa_start_temperature(opt._sa_start_temperature), _sa_cooling_rate(opt._sa_cooling_rate), _sa_neighbors_accepted(opt._sa_neighbors_accepted)
     {}
+    // LNS parmeters
     Driver::DoubleOption _time_per_variable;
     Driver::StringOption _constrain_type;
     Driver::UnsignedIntOption _max_iterations_per_intensity;
     Driver::UnsignedIntOption _min_intensity;
     Driver::UnsignedIntOption _max_intensity;
-    // FIXME: aggiungere anche i parametri sa
+    // LNS-SA specific parameters
     Driver::DoubleOption _sa_start_temperature;
     Driver::DoubleOption _sa_cooling_rate;
     Driver::UnsignedIntOption _sa_neighbors_accepted;

@@ -81,8 +81,6 @@ namespace Gecode { namespace Search { namespace Meta {
         unsigned int relaxed_variables = _current->relax(neighbor, intensity);
         LNSAbstractSpace* _neighbor = dynamic_cast<LNSAbstractSpace*>(neighbor);
         _neighbor->neighborhood_branching();
-        e_stop->limit(relaxed_variables * lns_options->timePerVariable());
-        e_stop->reset();
         switch (lns_options->constrainType()) {
           case LNS_CT_LOOSE:
             _neighbor->constrain(*current, false, 0.0);
@@ -101,18 +99,28 @@ namespace Gecode { namespace Search { namespace Meta {
           default:
             break;
         }
-        e->reset(neighbor); // in case of reset, the Space passed to the engine is not cloned
         Space* n = NULL;
-        std::list<Space*> prev_solutions;
-        do
-          prev_solutions.push_back(e->next());
-        while (prev_solutions.back() != NULL);
-        if (prev_solutions.size() > 1)
-          prev_solutions.pop_back(); // remove the last NULL solution
-        n = prev_solutions.back();
-        prev_solutions.pop_back();
-        for (std::list<Space*>::iterator it = prev_solutions.begin(); it != prev_solutions.end(); it++)
-          delete *it;
+        SpaceStatus neighbor_status = neighbor->status(stats);
+        if (neighbor_status == SS_SOLVED)
+          n = neighbor;
+        else if (neighbor_status == SS_FAILED)
+          n = NULL;
+        else
+        {
+          e->reset(neighbor); // keep in mind that in case of reset, the Space passed to the engine is not cloned
+          e_stop->limit(relaxed_variables * lns_options->timePerVariable());
+          e_stop->reset();
+          std::list<Space*> prev_solutions;
+          do
+            prev_solutions.push_back(e->next());
+          while (prev_solutions.back() != NULL);
+          if (prev_solutions.size() > 1)
+            prev_solutions.pop_back(); // remove the last NULL solution
+          n = prev_solutions.back();
+          prev_solutions.pop_back();
+          for (std::list<Space*>::iterator it = prev_solutions.begin(); it != prev_solutions.end(); it++)
+            delete *it;
+        }
         if (n != NULL)
         {
           neighbors_accepted++;
@@ -127,7 +135,7 @@ namespace Gecode { namespace Search { namespace Meta {
             intensity = lns_options->minIntensity();
             return n;
           }
-          else if (_n->improving(*current) || lns_options->constrainType() == LNS_CT_SA)
+          else if (lns_options->constrainType() == LNS_CT_SA || lns_options->constrainType() == LNS_CT_NONE || _n->improving(*current, lns_options->constrainType() == LNS_CT_STRICT))
           {
             delete current;
             current = n;

@@ -30,9 +30,9 @@ public:
   {
     const LNSMinimizeScript& _s = dynamic_cast<const LNSMinimizeScript&>(s);
     if (strict)
-      return _s.cost().val() < this->cost().val();
+      return this->cost().val() < _s.cost().val();
     else
-      return _s.cost().val() <= this->cost().val();      
+      return this->cost().val() <= _s.cost().val();
   }
   
   virtual void constrain(const Space& s, bool strict, double delta)

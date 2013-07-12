@@ -28,7 +28,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "$(PROJECT_DIR)/../..";
+			buildWorkingDirectory = "$(PROJECT_DIR)/..";
 			dependencies = (
 			);
 			name = "gecode-lns";
@@ -152,6 +152,7 @@
 				A27BE5AF178EEECD00DE6487 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

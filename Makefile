@@ -6,7 +6,7 @@ LDEFS=-L$(GECODEDIR)/lib -lgecodesearch -lgecodeint -lgecodefloat \
 	-lgecodeset -lgecodekernel -lgecodesupport -lgecodeminimodel -lgecodedriver -lgecodegist  
 CCFLAGS=-I$(GECODEDIR) 
 
-CCFLAGS=-pipe -Wall -Wno-deprecated $(DEFS) -g 
+CCFLAGS=-pipe -Wall -Wno-deprecated $(DEFS) -g -O0
 
 .SUFFIXES: .o .C .d
 .C.o:
