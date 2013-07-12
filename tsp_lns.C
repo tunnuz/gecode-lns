@@ -8,6 +8,8 @@
  *
  *  Bugfixes provided by:
  *     Geoffrey Chu
+ *  Extension to LNS by:
+ *     Luca Di Gaspero, Tommaso Urli
  *
  *  Last modified:
  *     $Date: 2012-09-07 11:29:57 +0200 (Fri, 07 Sep 2012) $ by $Author: schulte $
