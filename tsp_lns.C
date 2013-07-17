@@ -286,7 +286,7 @@ public:
     return max_free;
   }
   /** Returns the number of relaxable variables */
-  virtual unsigned int relaxable_vars() {
+  virtual unsigned int relaxable_vars() const {
     return p.size();
   }
   virtual void initial_solution_branching(unsigned long int restart) {
