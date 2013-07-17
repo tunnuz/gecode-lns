@@ -23,11 +23,7 @@ namespace Gecode { namespace Search { namespace Meta {
   
   Space*
   LNS::next(void) {
-    cerr << endl;
-    cerr << "Next";
     while (true) {
-      
-      cerr << ".";
 
       // We have to distinguish at least these two cases:
       // 1. we landed here for the first time (or because of a restart)
@@ -129,9 +125,6 @@ namespace Gecode { namespace Search { namespace Meta {
         }
         if (n != NULL)
         {
-          //
-          cerr << n->status() << endl;
-          dynamic_cast<MinimizeScript*>(n)->print(std::cerr);
           
           neighbors_accepted++;
           LNSAbstractSpace* _n = dynamic_cast<LNSAbstractSpace*>(n);
