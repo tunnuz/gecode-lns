@@ -16,7 +16,7 @@ public:
   /** Method to generate a relaxed solution (i.e., a neighbor) from the current one (this) */
   virtual unsigned int relax(Space* neighbor, unsigned int free) = 0;
   /** Returns the number of relaxable variables */
-  virtual unsigned int relaxable_vars() = 0;
+  virtual unsigned int relaxable_vars() const = 0;
   /* Returns whether the current space is improving w.r.t. s */
   virtual bool improving(const Space& s, bool strict = true) = 0;
   /* Constrain current solution cost to improve over the one passed as parameter plus/minus a delta */

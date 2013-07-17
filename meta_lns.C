@@ -14,6 +14,7 @@
 #include "lns_space.h"
 #include <list>
 
+using namespace std;
 
 namespace Gecode { namespace Search { namespace Meta {
   
@@ -22,7 +23,12 @@ namespace Gecode { namespace Search { namespace Meta {
   
   Space*
   LNS::next(void) {
+    cerr << endl;
+    cerr << "Next";
     while (true) {
+      
+      cerr << ".";
+
       // We have to distinguish at least these two cases:
       // 1. we landed here for the first time (or because of a restart)
       // 2. we just discovered a new best solution in the previous next() call
@@ -123,6 +129,10 @@ namespace Gecode { namespace Search { namespace Meta {
         }
         if (n != NULL)
         {
+          //
+          cerr << n->status() << endl;
+          dynamic_cast<MinimizeScript*>(n)->print(std::cerr);
+          
           neighbors_accepted++;
           LNSAbstractSpace* _n = dynamic_cast<LNSAbstractSpace*>(n);
           if (_n->improving(*best, true))
@@ -153,6 +163,7 @@ namespace Gecode { namespace Search { namespace Meta {
       idle_iterations++;
     }
     GECODE_NEVER;
+        
     return NULL;
   }
   
