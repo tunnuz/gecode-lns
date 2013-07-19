@@ -106,7 +106,10 @@ namespace Gecode { namespace Search { namespace Meta {
         if (neighbor_status == SS_SOLVED)
           n = neighbor;
         else if (neighbor_status == SS_FAILED)
+        {
+          delete neighbor;
           n = NULL;
+        }
         else
         {
           e->reset(neighbor); // keep in mind that in case of reset, the Space passed to the engine is not cloned
@@ -147,6 +150,10 @@ namespace Gecode { namespace Search { namespace Meta {
         if (m_stop != NULL && m_stop->stop(statistics(), opt)) // the overall search has to be stopped
         {
           // eventually ask to restart
+          if (n != NULL)
+            delete n;
+          if (neighbor != NULL)
+            delete neighbor;
           delete current;
           current = NULL;
           restart++;
