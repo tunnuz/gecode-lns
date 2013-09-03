@@ -153,7 +153,10 @@ namespace Gecode { namespace Search { namespace Meta {
           if (n != NULL)
             delete n;
           if (neighbor != NULL)
-            delete neighbor;
+          {
+            //cerr << "Neighbor is not null, and it's ok to erase it." << endl;
+            //delete neighbor;
+          }
           delete current;
           current = NULL;
           restart++;
