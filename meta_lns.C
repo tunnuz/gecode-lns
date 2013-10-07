@@ -18,6 +18,14 @@ using namespace std;
 
 namespace Gecode { namespace Search { namespace Meta {
   
+  // NoGood handling copied from RBS
+  NoGoods LNS::eng;
+  
+  NoGoods&
+  LNS::nogoods(void) {
+    return eng;
+  }
+  
   /// FIXME: to be removed
   LNSBaseOptions* LNS::lns_options;
   
