@@ -1,20 +1,11 @@
-GECODEDIR=/opt/local
-
 CPP=g++
-DEFS=
-LDEFS=-L$(GECODEDIR)/lib -lgecodesearch -lgecodeint -lgecodefloat \
-	-lgecodeset -lgecodekernel -lgecodesupport -lgecodeminimodel -lgecodedriver -lgecodegist  
-CCFLAGS=-I$(GECODEDIR) 
-
-CCFLAGS=-pipe -Wall -Wno-deprecated $(DEFS) -g -O0
+CCFLAGS=-pipe -Wall -Wno-deprecated $(DEFS) -g -O3
 
 .SUFFIXES: .o .C .d
 .C.o:
 	$(CPP) -c $(CCFLAGS) $<
 .C.d:
 	$(CPP) -MM $(CCFLAGS) -MF $@ $<
-
-CCFLAGS += -I$(GECODEDIR)/include -L$(GECODEDIR)/lib
 
 EXE=tsp_lns
 
@@ -30,7 +21,7 @@ DEPS=$(SRCS:.C=.d)
 	$(CXX) -c -o $@ $< $(CCFLAGS)
 
 $(EXE): $(OBJS) 
-	$(CPP) $(CCFLAGS) -o $(EXE) $(OBJS) $(LDEFS)
+	$(CPP) -framework Gecode $(CCFLAGS) -o $(EXE) $(OBJS) $(LDEFS)
 
 all: $(EXE)
 

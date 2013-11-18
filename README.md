@@ -2,7 +2,7 @@
 
 This repository contains a LNS meta-engine for GECODE (v4).
 
-In order to test it, a patch (`gecode_lns.patch`) should be applied to the `gecode/search.hh` include file in order to enable *friendship* of the `BaseEngine` class with `LNS`.
+In order to test it, a patch (`hybrid_gecode.patch`) must be applied to the `gecode/search.hh` include file in order to enable *friendship* of the `BaseEngine` class with `LNS`.
 
 Currently there are a few workarounds (in order of relevance):
 
