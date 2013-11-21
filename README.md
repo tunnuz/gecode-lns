@@ -2,6 +2,16 @@
 
 This repository contains a LNS meta-engine for GECODE (v4).
 
+## How to build it
+
+The project uses CMake to generate build files. In order to build it, run
+
+    mkdir build; cd build
+    cmake ..
+    make
+
+## Remarks
+
 In order to test it, a patch (`hybrid_gecode.patch`) must be applied to the `gecode/search.hh` include file in order to enable *friendship* of the `BaseEngine` class with `LNS`.
 
 Currently there are a few workarounds (in order of relevance):
