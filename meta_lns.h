@@ -84,7 +84,10 @@ namespace Gecode { namespace Search { namespace Meta {
   LNS::LNS(Space* s, size_t, TimeStop* e_stop0, 
            Engine* se0, Engine* e0, Search::Statistics& stats0, const Options& opt0)
     : se(se0), e(e0), root(s), best(0), current(0), e_stop(e_stop0), m_stop(opt0.stop), stats(stats0), opt(opt0), restart(0), idle_iterations(0),
-  shared(opt.threads == 1), temperature(1.0) {}
+  shared(opt.threads == 1), temperature(1.0) {
+  
+    r.time();
+  }
 
 }}}
 

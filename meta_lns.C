@@ -100,7 +100,7 @@ namespace Gecode { namespace Search { namespace Meta {
             break;
           case LNS_CT_SA:
           {
-            double p = r(RAND_MAX) / (double)RAND_MAX; // p should be a uniformly random number in (0, 1]
+            double p = (double) r(RAND_MAX) / (double)RAND_MAX; // p should be a uniformly random number in (0, 1]
             double delta = -temperature * std::log(p);
             _neighbor->constrain(*current, false, delta);
           }
