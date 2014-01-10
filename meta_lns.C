@@ -152,7 +152,7 @@ namespace Gecode { namespace Search { namespace Meta {
           else if (lns_options->constrainType() == LNS_CT_SA || lns_options->constrainType() == LNS_CT_NONE || _n->improving(*current, lns_options->constrainType() == LNS_CT_STRICT))
           {
             delete current;
-            current = n;
+            current = n->clone(shared);
           }
         }
         if (m_stop != NULL && m_stop->stop(statistics(), opt)) // the overall search has to be stopped
@@ -165,7 +165,8 @@ namespace Gecode { namespace Search { namespace Meta {
             //cerr << "Neighbor is not null, and it's ok to erase it." << endl;
             //delete neighbor;
           }
-          delete current;
+          if (current != NULL)
+              delete current;
           current = NULL;
           restart++;
           return NULL;
