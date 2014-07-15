@@ -26,6 +26,7 @@
 +
 +namespace Gecode { namespace Search { namespace Meta {
 +
++  template<class T>
 +  class ACO;
 +
 +}}}
