@@ -43,8 +43,8 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
-#include "lns_space.h"
-#include "lns.h"
+#include "gecode-lns/lns_space.h"
+#include "gecode-lns/lns.h"
 
 #include <algorithm>
 
@@ -302,7 +302,7 @@ public:
 
     // Then fix the remaining successors
     branch(*this, succ,  INT_VAR_MIN_MIN(), INT_VAL_MIN());
-  }  
+  }
   /// Return solution cost
   virtual IntVar cost(void) const {
     return total;
@@ -364,7 +364,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  
+
   // The lns options (FIXME: to remove)
   Gecode::Search::Meta::LNS::lns_options = &opt;
 
@@ -373,7 +373,7 @@ main(int argc, char* argv[]) {
               << ps_n-1 << std::endl;
     return 1;
   }
-  
+
   MinimizeScript::run<TSP,LNSTSP,LNSSizeOptions>(opt);
   return 0;
 }

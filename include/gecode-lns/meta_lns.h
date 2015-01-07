@@ -16,7 +16,8 @@
 #define __GECODE_SEARCH_META_LNS_HH__
 
 #include <gecode/search.hh>
-#include "lns.h"
+
+#include "gecode-lns/lns.h"
 
 namespace Gecode { namespace Search { namespace Meta {
 
@@ -54,11 +55,11 @@ namespace Gecode { namespace Search { namespace Meta {
     double temperature;
     /// Neighbors accepted at current temperature
     unsigned long int neighbors_accepted;
-    
+
     /// Empty no-goods (copied from RBS)
     GECODE_SEARCH_EXPORT
     static NoGoods eng;
-    
+
   public:
     /// Constructor
     LNS(Space*, size_t, TimeStop* e_stop0,
@@ -81,11 +82,11 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   forceinline
-  LNS::LNS(Space* s, size_t, TimeStop* e_stop0, 
+  LNS::LNS(Space* s, size_t, TimeStop* e_stop0,
            Engine* se0, Engine* e0, Search::Statistics& stats0, const Options& opt0)
     : se(se0), e(e0), root(s), best(0), current(0), e_stop(e_stop0), m_stop(opt0.stop), stats(stats0), opt(opt0), restart(0), idle_iterations(0),
   shared(opt.threads == 1), temperature(1.0) {
-  
+
     r.time();
   }
 

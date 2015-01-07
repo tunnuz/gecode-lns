@@ -10,25 +10,25 @@
  *
  */
 
-#include "meta_lns.h"
-#include "lns_space.h"
+#include "gecode-lns/meta_lns.h"
+#include "gecode-lns/lns_space.h"
 #include <list>
 
 using namespace std;
 
 namespace Gecode { namespace Search { namespace Meta {
-  
+
   // NoGood handling copied from RBS
   NoGoods LNS::eng;
-  
+
   NoGoods&
   LNS::nogoods(void) {
     return eng;
   }
-  
+
   /// FIXME: to be removed
   LNSBaseOptions* LNS::lns_options;
-  
+
   Space*
   LNS::next(void) {
     while (true) {
@@ -136,7 +136,7 @@ namespace Gecode { namespace Search { namespace Meta {
         }
         if (n != NULL)
         {
-          
+
           neighbors_accepted++;
           LNSAbstractSpace* _n = dynamic_cast<LNSAbstractSpace*>(n);
           if (_n->improving(*best, true))
@@ -175,15 +175,15 @@ namespace Gecode { namespace Search { namespace Meta {
       idle_iterations++;
     }
     GECODE_NEVER;
-        
+
     return NULL;
   }
-  
+
   Search::Statistics
   LNS::statistics(void) const {
     return stats + e->statistics();
   }
-  
+
   bool
   LNS::stopped(void) const {
     /*
@@ -195,7 +195,7 @@ namespace Gecode { namespace Search { namespace Meta {
      */
     return e->stopped();
   }
-  
+
   void
   LNS::reset(Space* s) {
     current = s;
@@ -210,12 +210,12 @@ namespace Gecode { namespace Search { namespace Meta {
     neighbors_accepted = 0;
     temperature = lns_options->SAstartTemperature();
   }
-  
+
   LNS::~LNS(void) {
     // Deleting e also deletes stop
     delete e;
   }
-  
+
 }}}
 
 // STATISTICS: search-other
