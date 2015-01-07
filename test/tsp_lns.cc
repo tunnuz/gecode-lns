@@ -43,8 +43,8 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
-#include "gecode-lns/lns_space.h"
-#include "gecode-lns/lns.h"
+#include "gecode-lns/lns_space.hh"
+#include "gecode-lns/lns.hh"
 
 #include <algorithm>
 

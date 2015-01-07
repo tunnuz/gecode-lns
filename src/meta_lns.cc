@@ -10,8 +10,8 @@
  *
  */
 
-#include "gecode-lns/meta_lns.h"
-#include "gecode-lns/lns_space.h"
+#include "gecode-lns/meta_lns.hh"
+#include "gecode-lns/lns_space.hh"
 #include <list>
 
 using namespace std;
