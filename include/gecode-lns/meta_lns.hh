@@ -17,7 +17,7 @@
 
 #include <gecode/search.hh>
 
-#include "gecode-lns/lns.h"
+#include "gecode-lns/lns.hh"
 
 namespace Gecode { namespace Search { namespace Meta {
 

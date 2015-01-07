@@ -62,38 +62,38 @@ namespace Gecode {
 
 namespace Gecode {
   enum LNSConstrainType { LNS_CT_NONE, LNS_CT_LOOSE, LNS_CT_STRICT, LNS_CT_SA };
-  
+
   class LNSBaseOptions
   {
   public:
     virtual double timePerVariable(void) const = 0;
     virtual void timePerVariable(double v) = 0;
-    
+
     virtual LNSConstrainType constrainType(void) const = 0;
     virtual void constrainType(LNSConstrainType v) = 0;
-    
+
     virtual unsigned int maxIterationsPerIntensity(void) const = 0;
     virtual void maxIterationsPerIntensity(unsigned int v) = 0;
-    
+
     virtual unsigned int minIntensity(void) const = 0;
     virtual void minIntensity(unsigned int v) = 0;
-    
+
     virtual unsigned int maxIntensity(void) const = 0;
     virtual void maxIntensity(unsigned int v) = 0;
-    
+
     virtual double SAstartTemperature(void) const = 0;
     virtual void SAstartTemperature(double v) = 0;
-    
+
     virtual double SAcoolingRate(void) const = 0;
     virtual void SAcoolingRate(double v) = 0;
-    
+
     virtual unsigned int SAneighborsAccepted(void) const = 0;
-    virtual void SAneighborsAccepted(unsigned int v) = 0;   
+    virtual void SAneighborsAccepted(unsigned int v) = 0;
   };
-  
+
   template <class OptionsBase>
   class LNSOptions : public LNSBaseOptions, public OptionsBase {
-  public:        
+  public:
     LNSOptions(const char* p) : OptionsBase(p),
     _time_per_variable("-lns_time_per_variable", "LNS: the time to grant for neighborhood exploration to each relaxed variable (in milliseconds)", 10.0),
     _constrain_type("-lns_constrain_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
@@ -102,13 +102,13 @@ namespace Gecode {
     _max_intensity("-lns_max_intensity", "LNS: the maximum relxation intensity", 5),
     _sa_start_temperature("-lns_sa_start_temperature", "LNS(SA): start temperature", 1.0),
     _sa_cooling_rate("-lns_sa_cooling_rate", "LNS(SA): cooling rate", 0.99),
-    _sa_neighbors_accepted("-lns_sa_neighbors_accepted", "LNS(SA): neighbors accepted per temperature", 100)    
+    _sa_neighbors_accepted("-lns_sa_neighbors_accepted", "LNS(SA): neighbors accepted per temperature", 100)
     {
       _constrain_type.add(LNS_CT_NONE, "none");
       _constrain_type.add(LNS_CT_LOOSE, "loose");
       _constrain_type.add(LNS_CT_STRICT, "strict");
       _constrain_type.add(LNS_CT_SA, "sa");
-      
+
       OptionsBase::add(_time_per_variable);
       OptionsBase::add(_constrain_type);
       OptionsBase::add(_max_iterations_per_intensity);
@@ -119,31 +119,31 @@ namespace Gecode {
       OptionsBase::add(_sa_neighbors_accepted);
     }
     //    virtual void help(void);
-    
+
     double timePerVariable(void) const { return _time_per_variable.value(); }
     void timePerVariable(double v) { _time_per_variable.value(v); }
-    
+
     LNSConstrainType constrainType(void) const { return static_cast<LNSConstrainType>(_constrain_type.value()); }
     void constrainType(LNSConstrainType v) { _constrain_type.value(v); }
-    
+
     unsigned int maxIterationsPerIntensity(void) const { return _max_iterations_per_intensity.value(); }
     void maxIterationsPerIntensity(unsigned int v) { _max_iterations_per_intensity.value(v); }
 
-    
+
     unsigned int minIntensity(void) const { return _min_intensity.value(); }
     void minIntensity(unsigned int v) { _min_intensity.value(v); }
-    
+
     unsigned int maxIntensity(void) const { return _max_intensity.value(); }
     void maxIntensity(unsigned int v) { _max_intensity.value(v); }
-    
+
     double SAstartTemperature(void) const { return _sa_start_temperature.value(); }
     void SAstartTemperature(double v) { _sa_start_temperature.value(v); }
-    
+
     double SAcoolingRate(void) const { return _sa_cooling_rate.value(); }
     void SAcoolingRate(double v) { _sa_cooling_rate.value(v); }
-    
+
     unsigned int SAneighborsAccepted(void) const { return _sa_neighbors_accepted.value(); }
-    void SAneighborsAccepted(unsigned int v) { _sa_neighbors_accepted.value(v); }            
+    void SAneighborsAccepted(unsigned int v) { _sa_neighbors_accepted.value(v); }
   protected:
     LNSOptions(const LNSOptions& opt)
     : OptionsBase(opt), _time_per_variable(opt._time_per_variable), _constrain_type(opt._constrain_type), _max_iterations_per_intensity(opt._max_iterations_per_intensity),
@@ -161,13 +161,13 @@ _min_intensity(opt._min_intensity), _max_intensity(opt._max_intensity),
     Driver::DoubleOption _sa_cooling_rate;
     Driver::UnsignedIntOption _sa_neighbors_accepted;
   };
-  
+
   typedef LNSOptions<SizeOptions> LNSSizeOptions;
   typedef LNSOptions<InstanceOptions> LNSInstanceOptions;
 }
 
 namespace Gecode { namespace Search {
-  
+
   /// This class implements a combined stop criterion for LNS based meta-engines
   /// the underlying engine is handled through a TimeStop, while the lns_stop is passed
   /// (possibly) from the script controlling the meta-engine.
@@ -183,7 +183,7 @@ namespace Gecode { namespace Search {
       return (e_stop != NULL && e_stop->stop(s,o)) || (lns_stop != NULL && lns_stop->stop(s,o));
     }
   };
-  
+
   /// Waiting for a more integrated (and not intrusive) solution, this class is abused
   /// for passing specific parameters to the LNS engine
   class LNSParameters : public LNSInstanceOptions {
@@ -192,13 +192,13 @@ namespace Gecode { namespace Search {
   };
 }}
 
-#include "meta_lns.h"
+#include "meta_lns.hh"
 
 namespace Gecode {
 
 
   namespace Search {
-    
+
     GECODE_SEARCH_EXPORT Engine* lns(Space* s, size_t sz,
                                      TimeStop* e_stop,
                                      Engine* se,
@@ -206,7 +206,7 @@ namespace Gecode {
                                      Search::Statistics& st,
                                      const Options& o);
   }
-  
+
   template<template<class> class E, class T>
   forceinline
   LNS<E,T>::LNS(T* s, const Search::Options& m_opt) : opt(m_opt) {
@@ -257,10 +257,10 @@ namespace Gecode {
   LNS<E,T>::stopped(void) const {
     return e->stopped();
   }
-  
-  
+
+
   template<template<class> class E, class T>
-  forceinline 
+  forceinline
   LNS<E,T>::~LNS(void) {
     if (opt.clone)
       delete root;
@@ -270,7 +270,7 @@ namespace Gecode {
 
   template<template<class> class E, class T>
   forceinline T*
-  lns(T* s, const Search::Options& o) {    
+  lns(T* s, const Search::Options& o) {
     LNS<E,T> l(s,o);
     return l.next();
   }
