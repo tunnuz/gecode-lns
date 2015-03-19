@@ -9,7 +9,7 @@
 find_path(GECODE_INCLUDE_DIR gecode/search.hh)
 set(GECODE_INCLUDE_DIRS ${GECODE_INCLUDE_DIR})
 
-foreach (module flatzinc driver gist search minimodel set int kernel support)
+foreach (module flatzinc driver gist search minimodel set int float kernel support)
   set(var GECODE_${module}_LIBRARY)
   find_library(${var} gecode${module})
   set(GECODE_LIBRARIES ${GECODE_LIBRARIES} ${${var}})

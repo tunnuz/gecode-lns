@@ -79,6 +79,7 @@ namespace Gecode { namespace Search { namespace Meta {
     static LNSBaseOptions* lns_options;
     /// Return no-goods
     virtual NoGoods& nogoods(void);
+
   };
 
   forceinline

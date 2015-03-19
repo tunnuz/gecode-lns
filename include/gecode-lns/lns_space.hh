@@ -43,6 +43,10 @@ public:
     else
       rel(*this, this->cost() <= _s.cost().val() + delta);      
   }
+  
+  virtual void master(unsigned long int i, const Space* s, NoGoods&) {}
+  virtual void slave(unsigned long int i, const Space* s) {}
+  
 protected:
   LNSMinimizeScript() {}
   LNSMinimizeScript(bool share, LNSMinimizeScript& s) : MinimizeScript(share,s) {}
