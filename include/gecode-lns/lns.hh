@@ -2,6 +2,7 @@
 #define _LNS_H
 
 #include <gecode/kernel.hh>
+#include <gecode/search.hh>
 
 namespace Gecode {
 
@@ -15,7 +16,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class LNS : public EngineBase {
+    class LNS : public Search::EngineBase<T> {
   public:
     /// Initialize engine for space \a s and options \a o
     LNS(T* s, const Search::Options& o);
@@ -237,25 +238,25 @@ namespace Gecode {
     start_engine = new E<T>(dynamic_cast<T*>(root),s_opt);
     Search::Engine* se = start_engine->e;
     start_engine->e = NULL;
-    e = Search::lns(root,sizeof(T),ts,se,ee,stats,m_opt);
+    this->e = Search::lns(root,sizeof(T),ts,se,ee,stats,m_opt);
   }
 
   template<template<class> class E, class T>
   forceinline T*
   LNS<E,T>::next(void) {
-    return dynamic_cast<T*>(e->next());
+    return dynamic_cast<T*>(this->e->next());
   }
 
   template<template<class> class E, class T>
   forceinline Search::Statistics
   LNS<E,T>::statistics(void) const {
-    return e->statistics();
+    return this->e->statistics();
   }
 
   template<template<class> class E, class T>
   forceinline bool
   LNS<E,T>::stopped(void) const {
-    return e->stopped();
+    return this->e->stopped();
   }
 
 

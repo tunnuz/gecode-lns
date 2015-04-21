@@ -48,7 +48,7 @@ public:
   virtual void slave(unsigned long int i, const Space* s) {}
   
 protected:
-  LNSMinimizeScript() {}
+  LNSMinimizeScript() : MinimizeScript(nullptr) {}
   LNSMinimizeScript(bool share, LNSMinimizeScript& s) : MinimizeScript(share,s) {}
 };
 
