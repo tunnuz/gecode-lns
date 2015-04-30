@@ -23,12 +23,13 @@ public:
   virtual void constrain(const Space& s, bool strict, double delta) = 0;
 };
 
-class LNSMinimizeScript : public LNSAbstractSpace, public MinimizeScript
+template <class ScriptType>
+class LNSScript : public LNSAbstractSpace, public ScriptType
 {
 public:
   virtual bool improving(const Space& s, bool strict = true)
   {
-    const LNSMinimizeScript& _s = dynamic_cast<const LNSMinimizeScript&>(s);
+    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
     if (strict)
       return this->cost().val() < _s.cost().val();
     else
@@ -37,19 +38,16 @@ public:
   
   virtual void constrain(const Space& s, bool strict, double delta)
   {
-    const LNSMinimizeScript& _s = dynamic_cast<const LNSMinimizeScript&>(s);
+    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
     if (strict)
       rel(*this, this->cost() < _s.cost().val() + delta);
     else
       rel(*this, this->cost() <= _s.cost().val() + delta);      
   }
   
-  virtual void master(unsigned long int i, const Space* s, NoGoods&) {}
-  virtual void slave(unsigned long int i, const Space* s) {}
-  
 protected:
-  LNSMinimizeScript() : MinimizeScript(nullptr) {}
-  LNSMinimizeScript(bool share, LNSMinimizeScript& s) : MinimizeScript(share,s) {}
+  LNSScript() : ScriptType(nullptr) {}
+  LNSScript(bool share, LNSScript& s) : ScriptType(share,s) {}
 };
 
 #endif
