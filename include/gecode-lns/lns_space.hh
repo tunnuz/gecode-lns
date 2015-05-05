@@ -29,20 +29,20 @@ class LNSScript : public LNSAbstractSpace, public ScriptType
 public:
     virtual bool improving(const Space& s, bool strict = true)
   {
-//    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
-//    if (strict)
-//      return this->cost().val() < _s.cost().val();
-//    else
-//      return this->cost().val() <= _s.cost().val();
+    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
+    if (strict)
+      return this->cost().val() < _s.cost().val();
+    else
+      return this->cost().val() <= _s.cost().val();
   }
   
   virtual void constrain(const Space& s, bool strict, double delta)
   {
-//    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
-//    if (strict)
-//      rel(*this, this->cost() < _s.cost().val() + delta);
-//    else
-//      rel(*this, this->cost() <= _s.cost().val() + delta);      
+    const LNSScript& _s = dynamic_cast<const LNSScript&>(s);
+    if (strict)
+      rel(*this, this->cost() < _s.cost().val() + delta);
+    else
+      rel(*this, this->cost() <= _s.cost().val() + delta);      
   }
   
 protected:
