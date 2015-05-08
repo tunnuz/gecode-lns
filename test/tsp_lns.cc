@@ -45,6 +45,7 @@
 #include <gecode/minimodel.hh>
 #include "gecode-lns/lns_space.hh"
 #include "gecode-lns/lns.hh"
+#include "gecode-lns/deferred_branching.hh"
 
 #include <algorithm>
 
@@ -232,7 +233,7 @@ namespace {
  * \ingroup Example
  *
  */
-class TSP : public LNSMinimizeScript {
+class TSP : public LNSScript<IntMinimizeScript> {
 protected:
   /// Problem instance to be solved
   Problem     p;
@@ -308,7 +309,7 @@ public:
     return total;
   }
   /// Constructor for cloning \a s
-  TSP(bool share, TSP& s) : LNSMinimizeScript(share,s), p(s.p) {
+  TSP(bool share, TSP& s) : LNSScript<IntMinimizeScript>(share,s), p(s.p) {
     succ.update(*this, share, s.succ);
     total.update(*this, share, s.total);
   }
@@ -364,8 +365,6 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-
-  // The lns options (FIXME: to remove)
   Gecode::Search::Meta::LNS::lns_options = &opt;
 
   if (opt.size() >= ps_n) {
@@ -374,7 +373,8 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  MinimizeScript::run<TSP,LNSTSP,LNSSizeOptions>(opt);
+  Script::run<TSP,LNSTSP,LNSSizeOptions>(opt);
+
   return 0;
 }
 
