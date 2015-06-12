@@ -104,7 +104,7 @@ namespace Gecode {
         LNSOptions(const char* p) : OptionsBase(p),
         _neighbor_time("-lns_time", "LNS: the time to grant for neighborhood exploration (in milliseconds)", 10.0),
         _per_variable("-lns_per_variable", "LNS: whether the time for neighborhood exploration is intended per-variable", true),
-        _stop_at_first_neighbor("-stop_at_first_neighbor", "LNS: stop after finding the first neighboring solution", true),
+        _stop_at_first_neighbor("-lns_stop_at_first_neighbor", "LNS: stop after finding the first neighboring solution", true),
         _constrain_type("-lns_constrain_type", "LNS: the type of constrain function to be applied to search (default: strict, other values: none, loose, sa)", LNS_CT_STRICT),
         _max_iterations_per_intensity("-lns_max_iterations_per_intensity", "LNS: max non improving iterations before increasing relaxation intensity", 10),
         _min_intensity("-lns_min_intensity", "LNS: the minimum relaxation intensity", 1),
