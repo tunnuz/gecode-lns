@@ -34,7 +34,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// The current solution
     Space* current;
     /// The stop control object for the sub-engine
-    TimeStop* e_stop;
+    Stop* e_stop;
     /// The stop control object for the overall LNS
     Stop* m_stop;
     /// The statistics
