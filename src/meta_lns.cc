@@ -119,9 +119,10 @@ namespace Gecode { namespace Search { namespace Meta {
                     if (intensity < lns_options->maxIntensity())
                         intensity++;
                     else {
+			// just restart from minimum intensity (the whole restart with inferior cost is too hard on cp)
                         intensity = lns_options->minIntensity();
-                        restart++;
-                        current = NULL;
+                        //restart++;
+                        //current = NULL;
                         idle_iterations = 0;
                         continue;
                     }
