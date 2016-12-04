@@ -263,7 +263,7 @@ public:
     costs = IntVarArgs(*this, n, Int::Limits::min, Int::Limits::max);
 
     // Enforce that the succesors yield a tour with appropriate costs
-    circuit(*this, c, succ, costs, total, opt.icl());
+    circuit(*this, c, succ, costs, total, opt.ipl());
 
     // Just assume that the circle starts forwards
     {
@@ -363,7 +363,7 @@ int
 main(int argc, char* argv[]) {
   LNSSizeOptions opt("TSP");
   opt.solutions(0);
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.parse(argc,argv);
   Gecode::Search::Meta::LNS::lns_options = &opt;
 
