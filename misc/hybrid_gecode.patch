@@ -1,47 +1,21 @@
-@@ -243,6 +243,36 @@
- 
- }}}
- 
-+
+@@ -620,6 +620,11 @@
+
+ #include <gecode/search/engine.hpp>
+
 +namespace Gecode {
-+
 +  template<template<class> class E, class T>
 +  class LNS;
-+
 +}
-+
-+namespace Gecode { namespace Search { namespace Meta {
-+
-+  class LNS;
-+
-+}}}
-+
-+
-+namespace Gecode {
-+
-+  template<template<class> class E, class T>
-+  class ACO;
-+
-+}
-+
-+namespace Gecode { namespace Search { namespace Meta {
-+
-+  template<class T>
-+  class ACO;
-+
-+}}}
-+
-+
 +
  namespace Gecode { namespace Search {
- 
-   /**
-@@ -462,6 +492,8 @@
-    */
-   class EngineBase {
-     template<template<class>class,class> friend class ::Gecode::RBS;
-+    template<template<class>class,class> friend class ::Gecode::LNS;
-+    template<template<class>class,class> friend class ::Gecode::ACO;
+
+   /// Base-class for search engines
+@@ -629,6 +634,8 @@
+     friend Engine* build(Space*, const Options&);
+     template<class, template<class> class>
+     friend Engine* build(Space*, const Options&);
++    template<template<class>class,class>
++    friend class ::Gecode::LNS;
    protected:
      /// The actual search engine
-     Search::Engine* e;
+     Engine* e;
