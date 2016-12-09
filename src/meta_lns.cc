@@ -249,6 +249,7 @@ namespace Gecode { namespace Search { namespace Meta {
                         delete current;
                         current = n->clone(shared);
                         delete n;
+                        n = NULL;
                     }
                 }
 
