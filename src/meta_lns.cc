@@ -17,30 +17,30 @@
 using namespace std;
 
 namespace Gecode { namespace Search { namespace Meta {
-    
+
     /** Injected by main */
     LNSBaseOptions* LNS::lns_options;
-    
+
     /** Nogoods are not really handled */
     NoGoods LNS::eng;
     NoGoods&
     LNS::nogoods(void) {
         return eng;
     }
-    
+
     /** Search */
     Space* LNS::next(void) {
-        
+
         while (true) {
-            
+
             /** We have to distinguish at least these two cases:
              *
-             *  1. we landed here for the first time (or because of a restart) 
+             *  1. we landed here for the first time (or because of a restart)
              *      --> current == NULL
-             *  2. we just discovered a new best solution in the previous next() call 
+             *  2. we just discovered a new best solution in the previous next() call
              *      --> current != NULL
              */
-            
+
             // We landed in this function for the first time or after a restart
             if (current == NULL)
             {
@@ -51,7 +51,7 @@ namespace Gecode { namespace Search { namespace Meta {
                 neighbors_accepted = 0;
                 current = root->clone(shared);
                 LNSAbstractSpace* _current = dynamic_cast<LNSAbstractSpace*>(current);
-                
+
                 // In a restart, constraint cost if stated by the options
                 if (best != NULL)
                 {
@@ -74,13 +74,13 @@ namespace Gecode { namespace Search { namespace Meta {
                             break;
                     }
                 }
-                
+
                 _current->initial_solution_branching(restart);
-                
+
                 // Look for (one) initial solution with same stopping condition as the overall LNS
                 se->reset(current);
                 Space* n = se->next();
-                
+
                 // If we find a starting solution
                 if (n != NULL) {
 
@@ -91,7 +91,7 @@ namespace Gecode { namespace Search { namespace Meta {
                         current = n->clone(shared);
                         return n;
                     }
-                    
+
                     // Best is this solution if it's better than previous
                     LNSAbstractSpace* _n = dynamic_cast<LNSAbstractSpace*>(n);
                     if (_n->improving(*best, true))
@@ -108,7 +108,7 @@ namespace Gecode { namespace Search { namespace Meta {
                     // Problem has no solution
                     return NULL;
             }
-            
+
             // We landed in this function after a previous call to next or we are currently looping
             else
             {
@@ -128,25 +128,25 @@ namespace Gecode { namespace Search { namespace Meta {
                     }
                     idle_iterations = 0;
                 }
-                
+
                 // Handle Simulated Annealing variables
                 if (neighbors_accepted > lns_options->SAneighborsAccepted())
                 {
                     temperature *= lns_options->SAcoolingRate();
                     neighbors_accepted = 0;
                 }
-                
+
                 // Initialize empty neighbour
                 Space* neighbor = root->clone(shared);
                 LNSAbstractSpace* _current = dynamic_cast<LNSAbstractSpace*>(current);
-                
+
                 // Relax (fix) current solution into neighbour
                 unsigned int relaxed_variables = _current->relax(neighbor, intensity);
                 LNSAbstractSpace* _neighbor = dynamic_cast<LNSAbstractSpace*>(neighbor);
 
                 // Use neighborhood branching
                 _neighbor->neighborhood_branching();
-                
+
                 // Depending on the constrain type, limit the cost of the neighbour
                 switch (lns_options->constrainType()) {
                     case LNS_CT_LOOSE:
@@ -166,7 +166,7 @@ namespace Gecode { namespace Search { namespace Meta {
                     default:
                         break;
                 }
-                
+
                 // Check for space status before solving
                 Space* n = NULL;
                 SpaceStatus neighbor_status = neighbor->status(stats);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Search { namespace Meta {
                     delete neighbor;
                     n = NULL;
                 }
-                
+
                 // If status is still unsolved, optimize
                 else
                 {
@@ -194,7 +194,7 @@ namespace Gecode { namespace Search { namespace Meta {
                         // Run until a solutions has been found, but not past overall LNS stopping criterion
                         e_stop = m_stop;
                     }
-                    
+
                     // If we want to stop at first neighbour
                     if (lns_options->stopAtFirstNeighbor())
                     {
@@ -207,11 +207,11 @@ namespace Gecode { namespace Search { namespace Meta {
                         do
                             prev_solutions.push_back(e->next());
                         while (prev_solutions.back() != NULL);
-                        
+
                         // Remove the last NULL solution if was generated by mistake
                         if (prev_solutions.size() > 1)
                             prev_solutions.pop_back();
-                        
+
                         // Remove intermediate solutions, n is last solution
                         n = prev_solutions.back();
                         prev_solutions.pop_back();
@@ -230,7 +230,7 @@ namespace Gecode { namespace Search { namespace Meta {
                 {
                     neighbors_accepted++;
                     LNSAbstractSpace* _n = dynamic_cast<LNSAbstractSpace*>(n);
-                    
+
                     // Improving move: replace current, reset search
                     if (_n->improving(*best, true))
                     {
@@ -242,15 +242,16 @@ namespace Gecode { namespace Search { namespace Meta {
                         intensity = lns_options->minIntensity();
                         return n;
                     }
-                    
+
                     // Side move: replace current, but do not reset search
                     else if (lns_options->constrainType() == LNS_CT_SA || lns_options->constrainType() == LNS_CT_NONE || _n->improving(*current, lns_options->constrainType() == LNS_CT_STRICT))
                     {
                         delete current;
                         current = n->clone(shared);
+                        delete n;
                     }
                 }
-                
+
                 // If the overall search has been stopped
                 if (m_stop != NULL && m_stop->stop(statistics(), opt))
                 {
@@ -271,15 +272,15 @@ namespace Gecode { namespace Search { namespace Meta {
             idle_iterations++;
         }
         GECODE_NEVER;
-        
+
         return NULL;
     }
-    
+
     Search::Statistics
     LNS::statistics(void) const {
         return stats + e->statistics();
     }
-    
+
     bool
     LNS::stopped(void) const {
         /*
@@ -291,7 +292,7 @@ namespace Gecode { namespace Search { namespace Meta {
          */
         return e->stopped();
     }
-    
+
     void
     LNS::reset(Space* s) {
         current = s;
@@ -306,12 +307,12 @@ namespace Gecode { namespace Search { namespace Meta {
         neighbors_accepted = 0;
         temperature = lns_options->SAstartTemperature();
     }
-    
+
     LNS::~LNS(void) {
         // Deleting e also deletes stop
         delete e;
     }
-    
+
 }}}
 
 // STATISTICS: search-other
