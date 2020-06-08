@@ -309,14 +309,13 @@ public:
     return total;
   }
   /// Constructor for cloning \a s
-  TSP(bool share, TSP& s) : LNSScript<IntMinimizeScript>(share,s), p(s.p) {
-    succ.update(*this, share, s.succ);
-    total.update(*this, share, s.total);
+  TSP(TSP& s) : LNSScript<IntMinimizeScript>(s), p(s.p) {
+    succ.update(*this, s.succ);
+    total.update(*this, s.total);
   }
   /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new TSP(share,*this);
+  virtual Space* copy() {
+    return new TSP(*this);
   }
   /// Print solution
   virtual void

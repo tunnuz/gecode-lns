@@ -1,6 +1,6 @@
 # LNS meta-engine for GECODE (v5)
 
-This repository contains a LNS meta-engine for GECODE (v5).
+This repository contains a LNS meta-engine for GECODE (v6).
 
 ## How to build it
 

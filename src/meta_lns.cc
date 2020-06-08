@@ -28,6 +28,8 @@ namespace Gecode { namespace Search { namespace Meta {
         return eng;
     }
 
+    CloneStatistics cs;
+
     /** Search */
     Space* LNS::next(void) {
 
@@ -49,7 +51,7 @@ namespace Gecode { namespace Search { namespace Meta {
                 temperature = lns_options->SAstartTemperature();
                 idle_iterations = 0;
                 neighbors_accepted = 0;
-                current = root->clone(shared);
+                current = root->clone(cs);
                 LNSAbstractSpace* _current = dynamic_cast<LNSAbstractSpace*>(current);
 
                 // In a restart, constraint cost if stated by the options
@@ -87,8 +89,8 @@ namespace Gecode { namespace Search { namespace Meta {
                     // Best is this solution if it wasn't there
                     if (best == NULL)
                     {
-                        best = n->clone(shared);
-                        current = n->clone(shared);
+                        best = n->clone(cs);
+                        current = n->clone(cs);
                         return n;
                     }
 
@@ -97,8 +99,8 @@ namespace Gecode { namespace Search { namespace Meta {
                     if (_n->improving(*best, true))
                     {
                         delete best;
-                        best = n->clone(shared);
-                        current = n->clone(shared);
+                        best = n->clone(cs);
+                        current = n->clone(cs);
                         return n;
                     }
                     else
@@ -137,7 +139,7 @@ namespace Gecode { namespace Search { namespace Meta {
                 }
 
                 // Initialize empty neighbour
-                Space* neighbor = root->clone(shared);
+                Space* neighbor = root->clone(cs);
                 LNSAbstractSpace* _current = dynamic_cast<LNSAbstractSpace*>(current);
 
                 // Relax (fix) current solution into neighbour
@@ -235,9 +237,9 @@ namespace Gecode { namespace Search { namespace Meta {
                     if (_n->improving(*best, true))
                     {
                         delete best;
-                        best = n->clone(shared);
+                        best = n->clone(cs);
                         delete current;
-                        current = n->clone(shared);
+                        current = n->clone(cs);
                         idle_iterations = 0;
                         intensity = lns_options->minIntensity();
                         return n;
@@ -247,7 +249,7 @@ namespace Gecode { namespace Search { namespace Meta {
                     else if (lns_options->constrainType() == LNS_CT_SA || lns_options->constrainType() == LNS_CT_NONE || _n->improving(*current, lns_options->constrainType() == LNS_CT_STRICT))
                     {
                         delete current;
-                        current = n->clone(shared);
+                        current = n->clone(cs);
                         delete n;
                         n = NULL;
                     }
@@ -301,7 +303,7 @@ namespace Gecode { namespace Search { namespace Meta {
         if (best && _s->improving(*best, true))
         {
             delete best;
-            best = s->clone(shared);
+            best = s->clone(cs);
         }
         idle_iterations = 0;
         intensity = lns_options->minIntensity();

@@ -51,8 +51,8 @@ public:
 protected:
   LNSScript() : ScriptType(nullptr) {}
   template<class O>
-  LNSScript(const O& opt) : ScriptType(opt) {}
-  LNSScript(bool share, LNSScript& s) : ScriptType(share,s) {}
+  LNSScript(O& opt) : ScriptType(opt) {}
+  LNSScript(LNSScript& s) : ScriptType(s) {}
 };
 
 #endif
